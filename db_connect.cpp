@@ -114,7 +114,7 @@ class sales{
     public:
     void add();
     void total_sales();
-    pqxx::connection conn{"dbname=bookshop_management user=postgres password=Kitsaws@2002 hostaddr=127.0.0.1 port=5432"};
+    pqxx::connection conn{"dbname=bookshop_management user=postgres password=hyper hostaddr=127.0.0.1 port=5432"};
 };
 void sales :: add(){
     cout << "Enter Member ID : ";
