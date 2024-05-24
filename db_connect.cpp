@@ -101,7 +101,7 @@ public:
     void add_member();
     void search_member();
     void refresh();
-    pqxx::connection conn{"dbname=bookshop_management user=postgres password=Kitsaws@2002 hostaddr=127.0.0.1 port=5432"};
+    pqxx::connection conn{"dbname=bookshop_management user=postgres password=hyper hostaddr=127.0.0.1 port=5432"};
 };
 void members::add_member()
 {
