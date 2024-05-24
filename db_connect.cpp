@@ -103,6 +103,91 @@ public:
     void refresh();
     pqxx::connection conn{"dbname=bookshop_management user=postgres password=hyper hostaddr=127.0.0.1 port=5432"};
 };
+class sales{
+    private:
+    int invoice_id; //primary key
+    string member_id; //foreign key from member
+    int book_id;//foreign key from member;
+    int qty;
+    int amount;
+    string date_sold;
+    public:
+    void add();
+    void total_sales();
+    pqxx::connection conn{"dbname=bookshop_management user=postgres password=Kitsaws@2002 hostaddr=127.0.0.1 port=5432"};
+};
+void sales :: add(){
+    cout << "Enter Member ID : ";
+    cin >> member_id;
+    cout << "Enter Book ID : ";
+    cin >> book_id;
+    cout << "Enter quantity : ";
+    cin >> qty;
+
+    try
+    {
+        pqxx::work N(conn);
+    pqxx:: result R = N.exec_params("SELECT price * $1 FROM books WHERE id = $2",qty,book_id);
+    N.commit();
+    if(R.empty()){
+        cout << "Invalid Book ID";
+        return;
+    }else{
+        amount = R[0][0].as<double>();
+        cout << "The bill amount is : " << R[0][0].as<double>()<< endl;
+    }
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << "\nSomething went wrong while calculatiing";
+    }
+    
+    try
+    {
+        pqxx::work  N1(conn);
+        N1.exec_params("INSERT INTO sales(member_id,book_id,quantity,amount,date_sold)"
+        "VALUES($1,$2,$3,$4,CURRENT_DATE)",member_id,book_id,qty,amount);
+        N1.commit();
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << "\nsomething went wrong while uploading";
+    }
+    try
+    {
+        pqxx::nontransaction N2(conn);
+        pqxx:: result R = N2.exec_params("SELECT invoice_id FROM sales WHERE member_id = $1",member_id);
+        N2.commit();
+        if (R.empty())
+        {
+            cout << "Invalid details please check again";
+        }else{
+            cout << "Invoice ID : " <<R[0]["invoice_id"].as<std::string>()<<endl;
+        }
+        
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << "\nUnable to fetch invoice ID.try again later";
+    }
+
+};
+void sales :: total_sales(){
+    try
+    {
+        pqxx::nontransaction N(conn);
+    pqxx::result R = N.exec_params("SELECT sum(amount) FROM sales WHERE EXTRACT(YEAR FROM date_sold) = EXTRACT(YEAR FROM CURRENT_DATE)");
+    if(!R.empty()){
+       cout << "Total sales of this year is : "<< R[0][0].as<double>()<<endl;
+    }
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << "\nSomething went wrong while fetching data!please try again";
+    }
+    
+    
+};
 void members::add_member()
 {
     cout << "Create ID : ";
@@ -208,10 +293,8 @@ void members :: refresh(){
     {
         std::cerr << e.what() << "\nUnable to complete request";
     }
-    
-    
+};
 
-}
 void employees::add_employee()
 {
     std::cout << "Enter your ID for verification: ";
@@ -938,13 +1021,20 @@ void books::delete_book()
 int main()
 
 {
+
+     // +----------------------------------+
+    // |		sales 	  |
+    // +----------------------------------+
+        sales sales_instance;
+        //sales_instance.add();
+        sales_instance.total_sales();
     // +----------------------------------+
     // |		Members  	  |
     // +----------------------------------+
-    members members_instance;
+    //members members_instance;
     //members_instance.add_member();
     //members_instance.search_member();
-    members_instance.refresh();
+    //members_instance.refresh();
 
     // +----------------------------------+
     // |		Employee	  	  |
