@@ -83,7 +83,7 @@ private:
     string date_of_joining;
     string salary;
     string manager_status; // default (T or F) def f
-    pqxx::connection conn{"dbname=bookshop_management user=postgres password=Kitsaws@2002 hostaddr=127.0.0.1 port=5432"};
+    pqxx::connection conn{"dbname=bookshop_management user=postgres password=hyper hostaddr=127.0.0.1 port=5432"};
 
 public:
     void add_employee();
