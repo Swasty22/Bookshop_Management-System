@@ -83,7 +83,7 @@ private:
     string date_of_joining;
     string salary;
     string manager_status; // default (T or F) def f
-    pqxx::connection conn{"dbname=bookshop_management user=postgres password=password hostaddr=127.0.0.1 port=5432"};
+    pqxx::connection conn{"dbname=bookshop_management user=postgres password=Kitsaws@2002 hostaddr=127.0.0.1 port=5432"};
 
 public:
     void add_employee();
@@ -92,7 +92,126 @@ public:
     void update_details();
     void remove_employee();
 };
+class members
+{
+private:
+    string name, address_1, address_2, city, state, contact_number, email, valid, id, begin_date, end_date;
 
+public:
+    void add_member();
+    void search_member();
+    void refresh();
+    pqxx::connection conn{"dbname=bookshop_management user=postgres password=Kitsaws@2002 hostaddr=127.0.0.1 port=5432"};
+};
+void members::add_member()
+{
+    cout << "Create ID : ";
+    cin >> id;
+    cout << "Enter name of member : ";
+    cin >> name;
+    cout << "Enter e-mail of member : ";
+    cin >> email;
+    cout << "Enter contact number of member : ";
+    cin >> contact_number;
+    cout << "Enter address (in 4 lines) : ";
+    cin.ignore();
+    getline(cin, address_1);
+    getline(cin, address_2);
+    getline(cin, city);
+    getline(cin, state);
+    cout << "Membership begin date : ";
+    getline(cin , begin_date);
+    cout << "Membership end date : ";
+    getline(cin , end_date);
+
+    try
+    {
+        pqxx::work txn(conn);
+        txn.exec_params("INSERT INTO members(id,name,email,contact_number,address_1,address_2,city,state,begin_date,end_date)"
+                        "VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
+                        id,name, email, contact_number, address_1, address_2,city,state,begin_date,end_date);
+        txn.commit();
+        cout << "Member added successfully\n\n";
+        cout << "Enter Registered email to get ID : ";
+        string search_email;
+        cin >> search_email;
+        pqxx::nontransaction N(conn);
+        pqxx::result R = N.exec_params("SELECT * FROM members WHERE email = $1", search_email);
+        N.commit();
+        if(R.empty())
+        {
+            cout << "No member found with that email\n";
+            return;
+        }
+        else
+        {
+            for (const auto &row : R)
+            {
+                cout << "ID: " << row["id"].as<std::string>() << endl;
+                cout << "Name: " << row["name"].as<std::string>() << endl;
+                cout << "Email: " << row["email"].as<std::string>() << endl;
+                cout << "Contact Number: " << row["contact_number"].as<std::string>() << endl;
+                cout << "Address: " << row["address_1"].as<std::string>() << endl;
+                cout << "Address: " << row["address_2"].as<std::string>() << endl;
+                cout << "City: " << row["city"].as<std::string>() << endl;
+                cout << "State: " << row["state"].as<std::string>() << endl;
+                cout << "Membership Status: " << row["membership_status"].as<std::string>() << endl;
+                cout << "Begin Date: " << row["begin_date"].as<std::string>() << endl;
+                cout << "End Date: " << row["end_date"].as<std::string>() << endl;
+            }
+        }
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << "Error: " << e.what() << "\nUnable to perform the operation.\n";
+    }
+};
+void members :: search_member(){
+    cout << "Enter id of member : ";
+    cin >> id;
+     pqxx::nontransaction N(conn);
+        pqxx::result R = N.exec_params("SELECT * FROM members WHERE id = $1", id);
+        N.commit();
+        if(R.empty())
+        {
+            cout << "No member found with that ID\n";
+            return;
+        }
+        else
+        {
+            for (const auto &row : R)
+            {
+                cout << "Name: " << row["name"].as<std::string>() << endl;
+                cout << "Email: " << row["email"].as<std::string>() << endl;
+                cout << "Contact Number: " << row["contact_number"].as<std::string>() << endl;
+                cout << "Address: " << row["address_1"].as<std::string>() << endl;
+                cout << "Address: " << row["address_2"].as<std::string>() << endl;
+                cout << "City: " << row["city"].as<std::string>() << endl;
+                cout << "State: " << row["state"].as<std::string>() << endl;
+                cout << "Membership Status: " << row["membership_status"].as<std::string>() << endl;
+                cout << "Begin Date: " << row["begin_date"].as<std::string>() << endl;
+                cout << "End Date: " << row["end_date"].as<std::string>() << endl;
+            }
+        };
+};
+void members :: refresh(){
+
+    try
+    {
+        pqxx::nontransaction N(conn);
+    std::string refresh_query = "UPDATE members SET membership_status = 'INVALID' WHERE end_date <= CURRENT_DATE;";
+    pqxx::result R = N.exec_params(refresh_query);
+    N.commit();
+    cout << "\nRefreshed Successfully";
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << "\nUnable to complete request";
+    }
+    
+    
+
+}
 void employees::add_employee()
 {
     std::cout << "Enter your ID for verification: ";
@@ -340,6 +459,76 @@ void employees::update_details()
         cerr << "Error updating salary: " << e.what() << "\n";
     }
 };
+void employees::remove_employee()
+{
+    int id;
+    std::cout << "Enter your ID for verification: ";
+    std::cin >> id;
+
+    try
+    {
+        pqxx::nontransaction N1(conn);
+        pqxx::result R1 = N1.exec_params("SELECT manager_status FROM employees WHERE id = $1", id);
+        N1.commit();
+
+        if (R1.empty() || R1[0][0].as<std::string>() != "T")
+        {
+            std::cout << "Only a manager is permitted to modify details.\n";
+            return;
+        }
+
+        std::cout << "Enter ID of the employee to remove: ";
+        std::cin >> id;
+
+        pqxx::nontransaction N2(conn);
+        pqxx::result R2 = N2.exec_params("SELECT * FROM employees WHERE id = $1", id);
+        N2.commit();
+
+        if (R2.empty())
+        {
+            std::cout << "Employee with the given ID does not exist.\n";
+            return;
+        }
+
+        auto row = R2[0];
+        std::cout << "Current Employee Details:\n";
+        std::cout << "ID: " << row["id"].as<int>() << "\n";
+        std::cout << "Name: " << row["employee_name"].as<std::string>() << "\n";
+        std::cout << "Gender: " << row["gender"].as<std::string>() << "\n";
+        std::cout << "Address Line 1: " << row["address_line_1"].as<std::string>() << "\n";
+        std::cout << "Address Line 2: " << row["address_line_2"].as<std::string>() << "\n";
+        std::cout << "City: " << row["city"].as<std::string>() << "\n";
+        std::cout << "State: " << row["state"].as<std::string>() << "\n";
+        std::cout << "Contact Number: " << row["phone_number"].as<std::string>() << "\n";
+        std::cout << "Date of Joining: " << row["date_of_joining"].as<std::string>() << "\n";
+        std::cout << "Salary: " << row["salary"].as<float>() << "\n";
+        std::cout << "Manager Status: " << row["manager_status"].as<std::string>() << "\n";
+
+        char choice;
+        std::cout << "Choose Y to remove employee [Y/N]: ";
+        std::cin >> choice;
+
+        if (choice == 'Y' || choice == 'y')
+        {
+            pqxx::work W(conn);
+            W.exec_params("DELETE FROM employees WHERE id = $1", id);
+            W.commit();
+            std::cout << "Deleted Successfully.\n";
+        }
+        else if (choice == 'N' || choice == 'n')
+        {
+            std::cout << "No changes made.\n";
+        }
+        else
+        {
+            std::cout << "Invalid Character\n";
+        }
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << e.what() << "\nUnable to complete request\n";
+    }
+}
 
 void purchase::new_order()
 {
@@ -750,14 +939,23 @@ int main()
 
 {
     // +----------------------------------+
+    // |		Members  	  |
+    // +----------------------------------+
+    members members_instance;
+    //members_instance.add_member();
+    //members_instance.search_member();
+    members_instance.refresh();
+
+    // +----------------------------------+
     // |		Employee	  	  |
     // +----------------------------------+
 
-    employees employee_instance;
-    // employee_instance.add_employee();
-    // employee_instance.search_employee();
-    // employee_instance.assign_manager();
-    employee_instance.update_details();
+    // employees employee_instance;
+    //  employee_instance.add_employee();
+    //  employee_instance.search_employee();
+    //  employee_instance.assign_manager();
+    //  employee_instance.update_details();
+    // employee_instance.remove_employee();
 
     // +----------------------------------+
     // |		purchase	  	  |
