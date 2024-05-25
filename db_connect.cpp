@@ -6,6 +6,7 @@
 using namespace std;
 using namespace pqxx;
 
+
 typedef struct
 {
     int date;
@@ -22,7 +23,7 @@ private:
     string author;
     int price;
     int quantity;
-    pqxx::connection conn{"dbname=bookshop_management user=postgres password=hyper hostaddr=127.0.0.1 port=5432"};
+    pqxx::connection conn{"dbname=bookshop_management user=postgres password=your_password hostaddr=127.0.0.1 port=5432"};
 
 public:
     void add();
@@ -42,7 +43,7 @@ private:
     string state;
     string country;
     int pincode;
-    pqxx::connection conn{"dbname=bookshop_management user=postgres password=hyper hostaddr=127.0.0.1 port=5432"};
+    pqxx::connection conn{"dbname=bookshop_management user=postgres password=your_password hostaddr=127.0.0.1 port=5432"};
 
 public:
     void add_supplier();
@@ -67,7 +68,7 @@ public:
     void view_order();
     void cancel_order();
     void received_order();
-    pqxx::connection conn{"dbname=bookshop_management user=postgres password=hyper hostaddr=127.0.0.1 port=5432"};
+    pqxx::connection conn{"dbname=bookshop_management user=postgres password=your_password hostaddr=127.0.0.1 port=5432"};
 };
 class employees
 {
@@ -83,7 +84,7 @@ private:
     string date_of_joining;
     string salary;
     string manager_status; // default (T or F) def f
-    pqxx::connection conn{"dbname=bookshop_management user=postgres password=hyper hostaddr=127.0.0.1 port=5432"};
+    pqxx::connection conn{"dbname=bookshop_management user=postgres password=your_password hostaddr=127.0.0.1 port=5432"};
 
 public:
     void add_employee();
@@ -101,22 +102,25 @@ public:
     void add_member();
     void search_member();
     void refresh();
-    pqxx::connection conn{"dbname=bookshop_management user=postgres password=hyper hostaddr=127.0.0.1 port=5432"};
+    pqxx::connection conn{"dbname=bookshop_management user=postgres password=your_password hostaddr=127.0.0.1 port=5432"};
 };
-class sales{
-    private:
-    int invoice_id; //primary key
-    string member_id; //foreign key from member
-    int book_id;//foreign key from member;
+class sales
+{
+private:
+    int invoice_id;   // primary key
+    string member_id; // foreign key from member
+    int book_id;      // foreign key from member;
     int qty;
     int amount;
     string date_sold;
-    public:
+
+public:
     void add();
     void total_sales();
-    pqxx::connection conn{"dbname=bookshop_management user=postgres password=hyper hostaddr=127.0.0.1 port=5432"};
+    pqxx::connection conn{"dbname=bookshop_management user=postgres password=your_password hostaddr=127.0.0.1 port=5432"};
 };
-void sales :: add(){
+void sales ::add()
+{
     cout << "Enter Member ID : ";
     cin >> member_id;
     cout << "Enter Book ID : ";
@@ -127,66 +131,70 @@ void sales :: add(){
     try
     {
         pqxx::work N(conn);
-    pqxx:: result R = N.exec_params("SELECT price * $1 FROM books WHERE id = $2",qty,book_id);
-    N.commit();
-    if(R.empty()){
-        cout << "Invalid Book ID";
-        return;
-    }else{
-        amount = R[0][0].as<double>();
-        cout << "The bill amount is : " << R[0][0].as<double>()<< endl;
+        pqxx::result R = N.exec_params("SELECT price * $1 FROM books WHERE id = $2", qty, book_id);
+        N.commit();
+        if (R.empty())
+        {
+            cout << "Invalid Book ID";
+            return;
+        }
+        else
+        {
+            amount = R[0][0].as<double>();
+            cout << "The bill amount is : " << R[0][0].as<double>() << endl;
+        }
     }
-    }
-    catch(const std::exception& e)
+    catch (const std::exception &e)
     {
         std::cerr << e.what() << "\nSomething went wrong while calculatiing";
     }
-    
+
     try
     {
-        pqxx::work  N1(conn);
+        pqxx::work N1(conn);
         N1.exec_params("INSERT INTO sales(member_id,book_id,quantity,amount,date_sold)"
-        "VALUES($1,$2,$3,$4,CURRENT_DATE)",member_id,book_id,qty,amount);
+                       "VALUES($1,$2,$3,$4,CURRENT_DATE)",
+                       member_id, book_id, qty, amount);
         N1.commit();
     }
-    catch(const std::exception& e)
+    catch (const std::exception &e)
     {
         std::cerr << e.what() << "\nsomething went wrong while uploading";
     }
     try
     {
         pqxx::nontransaction N2(conn);
-        pqxx:: result R = N2.exec_params("SELECT invoice_id FROM sales WHERE member_id = $1",member_id);
+        pqxx::result R = N2.exec_params("SELECT invoice_id FROM sales WHERE member_id = $1", member_id);
         N2.commit();
         if (R.empty())
         {
             cout << "Invalid details please check again";
-        }else{
-            cout << "Invoice ID : " <<R[0]["invoice_id"].as<std::string>()<<endl;
         }
-        
+        else
+        {
+            cout << "Invoice ID : " << R[0]["invoice_id"].as<std::string>() << endl;
+        }
     }
-    catch(const std::exception& e)
+    catch (const std::exception &e)
     {
         std::cerr << e.what() << "\nUnable to fetch invoice ID.try again later";
     }
-
 };
-void sales :: total_sales(){
+void sales ::total_sales()
+{
     try
     {
         pqxx::nontransaction N(conn);
-    pqxx::result R = N.exec_params("SELECT sum(amount) FROM sales WHERE EXTRACT(YEAR FROM date_sold) = EXTRACT(YEAR FROM CURRENT_DATE)");
-    if(!R.empty()){
-       cout << "Total sales of this year is : "<< R[0][0].as<double>()<<endl;
+        pqxx::result R = N.exec_params("SELECT sum(amount) FROM sales WHERE EXTRACT(YEAR FROM date_sold) = EXTRACT(YEAR FROM CURRENT_DATE)");
+        if (!R.empty())
+        {
+            cout << "Total sales of this year is : " << R[0][0].as<double>() << endl;
+        }
     }
-    }
-    catch(const std::exception& e)
+    catch (const std::exception &e)
     {
         std::cerr << e.what() << "\nSomething went wrong while fetching data!please try again";
     }
-    
-    
 };
 void members::add_member()
 {
@@ -205,16 +213,16 @@ void members::add_member()
     getline(cin, city);
     getline(cin, state);
     cout << "Membership begin date : ";
-    getline(cin , begin_date);
+    getline(cin, begin_date);
     cout << "Membership end date : ";
-    getline(cin , end_date);
+    getline(cin, end_date);
 
     try
     {
         pqxx::work txn(conn);
         txn.exec_params("INSERT INTO members(id,name,email,contact_number,address_1,address_2,city,state,begin_date,end_date)"
                         "VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
-                        id,name, email, contact_number, address_1, address_2,city,state,begin_date,end_date);
+                        id, name, email, contact_number, address_1, address_2, city, state, begin_date, end_date);
         txn.commit();
         cout << "Member added successfully\n\n";
         cout << "Enter Registered email to get ID : ";
@@ -223,7 +231,7 @@ void members::add_member()
         pqxx::nontransaction N(conn);
         pqxx::result R = N.exec_params("SELECT * FROM members WHERE email = $1", search_email);
         N.commit();
-        if(R.empty())
+        if (R.empty())
         {
             cout << "No member found with that email\n";
             return;
@@ -251,45 +259,47 @@ void members::add_member()
         std::cerr << "Error: " << e.what() << "\nUnable to perform the operation.\n";
     }
 };
-void members :: search_member(){
+void members ::search_member()
+{
     cout << "Enter id of member : ";
     cin >> id;
-     pqxx::nontransaction N(conn);
-        pqxx::result R = N.exec_params("SELECT * FROM members WHERE id = $1", id);
-        N.commit();
-        if(R.empty())
+    pqxx::nontransaction N(conn);
+    pqxx::result R = N.exec_params("SELECT * FROM members WHERE id = $1", id);
+    N.commit();
+    if (R.empty())
+    {
+        cout << "No member found with that ID\n";
+        return;
+    }
+    else
+    {
+        for (const auto &row : R)
         {
-            cout << "No member found with that ID\n";
-            return;
+            cout << "Name: " << row["name"].as<std::string>() << endl;
+            cout << "Email: " << row["email"].as<std::string>() << endl;
+            cout << "Contact Number: " << row["contact_number"].as<std::string>() << endl;
+            cout << "Address: " << row["address_1"].as<std::string>() << endl;
+            cout << "Address: " << row["address_2"].as<std::string>() << endl;
+            cout << "City: " << row["city"].as<std::string>() << endl;
+            cout << "State: " << row["state"].as<std::string>() << endl;
+            cout << "Membership Status: " << row["membership_status"].as<std::string>() << endl;
+            cout << "Begin Date: " << row["begin_date"].as<std::string>() << endl;
+            cout << "End Date: " << row["end_date"].as<std::string>() << endl;
         }
-        else
-        {
-            for (const auto &row : R)
-            {
-                cout << "Name: " << row["name"].as<std::string>() << endl;
-                cout << "Email: " << row["email"].as<std::string>() << endl;
-                cout << "Contact Number: " << row["contact_number"].as<std::string>() << endl;
-                cout << "Address: " << row["address_1"].as<std::string>() << endl;
-                cout << "Address: " << row["address_2"].as<std::string>() << endl;
-                cout << "City: " << row["city"].as<std::string>() << endl;
-                cout << "State: " << row["state"].as<std::string>() << endl;
-                cout << "Membership Status: " << row["membership_status"].as<std::string>() << endl;
-                cout << "Begin Date: " << row["begin_date"].as<std::string>() << endl;
-                cout << "End Date: " << row["end_date"].as<std::string>() << endl;
-            }
-        };
+    };
 };
-void members :: refresh(){
+void members ::refresh()
+{
 
     try
     {
         pqxx::nontransaction N(conn);
-    std::string refresh_query = "UPDATE members SET membership_status = 'INVALID' WHERE end_date <= CURRENT_DATE;";
-    pqxx::result R = N.exec_params(refresh_query);
-    N.commit();
-    cout << "\nRefreshed Successfully";
+        std::string refresh_query = "UPDATE members SET membership_status = 'INVALID' WHERE end_date <= CURRENT_DATE;";
+        pqxx::result R = N.exec_params(refresh_query);
+        N.commit();
+        cout << "\nRefreshed Successfully";
     }
-    catch(const std::exception& e)
+    catch (const std::exception &e)
     {
         std::cerr << e.what() << "\nUnable to complete request";
     }
@@ -1018,59 +1028,72 @@ void books::delete_book()
     }
 }
 
-int main()
+    void book_menu();
+    void supplier_menu();
+    void purchase_menu();
+    void employee_menu();
+    void member_menu();
+    void sales_menu();
 
+void main_menu()
 {
+    int c;
+    cout << "*************************************************" << endl;
+    cout << "         BOOKSHOP MANGEMENT SYSTEM" << endl;
+    cout << "*************************************************" << endl;
+    cout << "  1. BOOKS" << endl;
+    cout << "  2. SUPPPLIERS" << endl;
+    cout << "  3. PURCHASE" << endl;
+    cout << "  4. EMPLOYEE" << endl;
+    cout << "  5. MEMBERS" << endl;
+    cout << "  6. SALES" << endl;
+    cout << "Choose an option : ";
+    cin >> c;
 
-     // +----------------------------------+
-    // |		sales 	  |
-    // +----------------------------------+
-        sales sales_instance;
-        //sales_instance.add();
-        sales_instance.total_sales();
-    // +----------------------------------+
-    // |		Members  	  |
-    // +----------------------------------+
-    //members members_instance;
-    //members_instance.add_member();
-    //members_instance.search_member();
-    //members_instance.refresh();
+    switch (c)
+    {
+    case 1:
+        system("cls");
+        book_menu();
+        break;
 
-    // +----------------------------------+
-    // |		Employee	  	  |
-    // +----------------------------------+
-
-    // employees employee_instance;
-    //  employee_instance.add_employee();
-    //  employee_instance.search_employee();
-    //  employee_instance.assign_manager();
-    //  employee_instance.update_details();
-    // employee_instance.remove_employee();
-
-    // +----------------------------------+
-    // |		purchase	  	  |
-    // +----------------------------------+
-    // purchase purchase_instance;
-    // purchase_instance.new_order();
-    // purchase_instance.received_order();
-    // purchase_instance.cancel_order();
-    // purchase_instance.view_order();
-
-    // +----------------------------------+
-    // |		suppliers	  	  |
-    // +----------------------------------+
-
-    // suppliers suppliers_instance;
-    // suppliers_instance.add_supplier();
-    // suppliers_instance.remove_supplier();
-    // suppliers_instance.search_supplier_by_id();
-
-    // +----------------------------------+
-    // |		books	  	  |
-    // +----------------------------------+
-
-    /*int a;
-    std::cout << "1) Add book" << std::endl;
+    case 2:
+        system("cls");
+        supplier_menu();
+        break;
+    case 3:
+        system("cls");
+        purchase_menu();
+        break;
+    case 4:
+        system("cls");
+        employee_menu();
+        break;
+    case 5:
+        system("cls");
+        member_menu();
+        break;
+    case 6:
+        system("cls");
+        sales_menu();
+        break;
+        case 7:
+            exit(1);
+        default:
+            system("cls");
+            cout << "Invalid input" <<endl;
+            break;
+     
+    }
+   
+}
+void book_menu(){
+    int c;
+    books b;
+    cout << "*************************************************" << endl;
+	cout << "                  BOOK MENU" << endl;
+	cout << "*************************************************" << endl;
+     std::cout << "1) Add book" << std::endl;
     std::cout << endl;
     std::cout << "2) update price" << std::endl;
     std::cout << endl;
@@ -1080,34 +1103,228 @@ int main()
     std::cout << endl;
     std::cout << "5) delete book" << std::endl;
     std::cout << endl;
+    cout << "So,which operation you want to perform\n";
+    cin >> c;
+    switch(c){
+        case 1:
+            b.add();
+            break;
+        case 2:
+            b.update_price();
+            break;
+        case 3:
+            b.search();
+            break;
+        case 4:
+            b.update_quantity();
+        case 5:
+            b.delete_book();
+            break;
+        case 6:
+            return;
+            break;
+        default:
+            cout << "Wrong input\n";
+            break;
+        }
+};
+void supplier_menu()
+{
+    int c;
+    suppliers s;
+    cout << "*************************************************" << endl;
+    cout << "                SUPPLIER MENU" << endl;
+    cout << "*************************************************" << endl;
+    cout << "   1. ADD" << endl;
+    cout << "   2. REMOVE" << endl;
+    cout << "   3. SEARCH" << endl;
+    cout << "   4. RETURN TO MAIN MENU" << endl
+         << endl
+         << endl;
+    cout << "So,which operation you need to perform\n";
+    cin >> c;
+    switch (c)
+    {
+    case 1:
+        s.add_supplier();
+        break;
+    case 2:
+        s.remove_supplier();
+        break;
+    case 3:
+        s.search_supplier_by_id();
+        break;
+    case 4:
+        return;
+    default:
+        cout << "wrong input" << endl;
+        break;
+    }
+};
+void purchase_menu()
+{
+    int c;
+    purchase p;
+    cout << "*************************************************" << endl;
+    cout << "                PURCHASES MENU" << endl;
+    cout << "*************************************************" << endl;
+    cout << "   1. NEW ORDER" << endl;
+    cout << "   2. VIEW ORDER" << endl;
+    cout << "   3. CANCEL ORDER" << endl;
+    cout << "   4. RECEIVED ORDER" << endl;
+    cout << "   5. RETURN TO MAIN MENU" << endl
+         << endl
+         << endl;
+    cout << "So,which operation you need to perform\n";
+    cin >> c;
+    switch (c)
+    {
+    case 1:
+        p.new_order();
+        break;
+    case 2:
+        p.view_order();
+        break;
+    case 3:
+        p.cancel_order();
+        break;
+    case 4:
+        p.received_order();
+        break;
+    case 5:
+        return;
+    default:
+        cout << "Invalid input\n";
+        break;
+    }
+};
+void employee_menu()
+{
+    int c;
+    employees e;
+    cout << "*************************************************" << endl;
+    cout << "                 EMPLOYEE MENU" << endl;
+    cout << "*************************************************" << endl;
+    cout << "   1. NEW EMPLOYEE" << endl;
+    cout << "   2. SEARCH EMPLOYEE" << endl;
+    cout << "   3. ASSIGN MANAGER" << endl;
+    cout << "   4. VIEW EMPLOYEE" << endl;
+    cout << "   5. UPDATE SALARY" << endl;
+    cout << "   6. RETURN TO MAIN MENU" << endl
+         << endl
+         << endl;
+    cout << "So,which operation you need to perform\n";
+    cin >> c;
 
-    std::cout << "select any number 1-5 to perform action respectively" << std::endl;
-    std::cin >> a;
-    books books_instance;
-    if (a == 1)
+    switch (c)
     {
-        books_instance.add();
+    case 1:
+        e.add_employee();
+        break;
+    case 2:
+        e.search_employee();
+        break;
+    case 3:
+        e.assign_manager();
+        break;
+    case 4:
+        e.search_employee();
+        break;
+    case 5:
+        e.update_details();
+        break;
+    case 6:
+        e.remove_employee();
+    case 7:
+        return;
+    default:
+        cout << "Invalid input\n";
+        break;
     }
-    else if (a == 2)
+}
+void member_menu()
+{
+    int c;
+    members m;
+    m.refresh();
+    cout << "*************************************************" << endl;
+    cout << "                 MEMBERS MENU" << endl;
+    cout << "*************************************************" << endl;
+    cout << "   1. NEW MEMBER" << endl;
+    cout << "   2. SEARCH MEMBER" << endl;
+    cout << "   3. RETURN TO MAIN MENU" << endl
+         << endl
+         << endl;
+    cout << "So,Which operation you want to perform\n";
+    cin >> c;
+    switch (c)
     {
-        books_instance.update_price();
+    case 1:
+        m.add_member();
+        break;
+    case 2:
+        m.search_member();
+        break;
+    case 3:
+        return;
+    default:
+        cout << "Wrong Input" << endl;
+        break;
     }
-    else if (a == 3)
+}
+void sales_menu()
+{
+    int c;
+    sales s;
+    cout << "*************************************************" << endl;
+    cout << "                 SALES MENU" << endl;
+    cout << "*************************************************" << endl;
+    cout << "   1. ADD NEW BILL" << endl;
+    cout << "   2. TOTAL SALES OF THE YEAR" << endl;
+    cout << "   3. RETURN TO MAIN MENU" << endl
+         << endl
+         << endl;
+    cout << "So which operation you want to perform \n";
+    cin >> c;
+    switch (c)
     {
-        books_instance.search();
+    case 1:
+        s.add();
+        break;
+    case 2:
+        s.total_sales();
+        break;
+    case 3:
+        return;
+    default:
+        cout << "Wrong Input" << endl;
+        break;
     }
-    else if (a == 4)
+}
+   
+int main()
+
+{
+    try
     {
-        books_instance.update_quantity();
+        pqxx::connection conn("dbname=bookshop_management user=postgres password=your_password hostaddr=127.0.0.1 port=5432");
+        if(conn.is_open()){
+            while (1){
+                system ("cls");
+                cout << "Main Menu"<<endl;
+                main_menu();
+                break;
+            }
+        }else{
+            system("cls");
+            cout << "Error while connecting to the database." << endl << "Contact Tech Expert." << endl;
+        }
+
     }
-    else if (a == 5)
+    catch(const std::exception& e)
     {
-        books_instance.delete_book();
+        std::cerr << e.what() << "\nConnection error";
     }
-    else
-    {
-        cout << "unknown selection";
-    }*/
 
     return 0;
 }
