@@ -23,7 +23,7 @@ private:
     string author;
     int price;
     int quantity;
-    pqxx::connection conn{"dbname=bookshop_management user=postgres password=your_password hostaddr=127.0.0.1 port=5432"};
+    pqxx::connection conn{"dbname=bookshop_management user=postgres password=Kitsaws@2002 hostaddr=127.0.0.1 port=5432"};
 
 public:
     void add();
@@ -43,7 +43,7 @@ private:
     string state;
     string country;
     int pincode;
-    pqxx::connection conn{"dbname=bookshop_management user=postgres password=your_password hostaddr=127.0.0.1 port=5432"};
+    pqxx::connection conn{"dbname=bookshop_management user=postgres password=Kitsaws@2002 hostaddr=127.0.0.1 port=5432"};
 
 public:
     void add_supplier();
@@ -68,7 +68,7 @@ public:
     void view_order();
     void cancel_order();
     void received_order();
-    pqxx::connection conn{"dbname=bookshop_management user=postgres password=your_password hostaddr=127.0.0.1 port=5432"};
+    pqxx::connection conn{"dbname=bookshop_management user=postgres password=Kitsaws@2002 hostaddr=127.0.0.1 port=5432"};
 };
 class employees
 {
@@ -84,7 +84,7 @@ private:
     string date_of_joining;
     string salary;
     string manager_status; // default (T or F) def f
-    pqxx::connection conn{"dbname=bookshop_management user=postgres password=your_password hostaddr=127.0.0.1 port=5432"};
+    pqxx::connection conn{"dbname=bookshop_management user=postgres password=Kitsaws@2002 hostaddr=127.0.0.1 port=5432"};
 
 public:
     void add_employee();
@@ -102,7 +102,7 @@ public:
     void add_member();
     void search_member();
     void refresh();
-    pqxx::connection conn{"dbname=bookshop_management user=postgres password=your_password hostaddr=127.0.0.1 port=5432"};
+    pqxx::connection conn{"dbname=bookshop_management user=postgres password=Kitsaws@2002 hostaddr=127.0.0.1 port=5432"};
 };
 class sales
 {
@@ -117,7 +117,7 @@ private:
 public:
     void add();
     void total_sales();
-    pqxx::connection conn{"dbname=bookshop_management user=postgres password=your_password hostaddr=127.0.0.1 port=5432"};
+    pqxx::connection conn{"dbname=bookshop_management user=postgres password=Kitsaws@2002 hostaddr=127.0.0.1 port=5432"};
 };
 void sales ::add()
 {
@@ -1039,7 +1039,7 @@ void main_menu()
 {
     int c;
     cout << "*************************************************" << endl;
-    cout << "         BOOKSHOP MANGEMENT SYSTEM" << endl;
+    cout << "         BOOKSHOP MANAGEMENT SYSTEM" << endl;
     cout << "*************************************************" << endl;
     cout << "  1. BOOKS" << endl;
     cout << "  2. SUPPPLIERS" << endl;
@@ -1193,7 +1193,7 @@ void purchase_menu()
         break;
     case 5:
         return;
-    default:
+        default:
         cout << "Invalid input\n";
         break;
     }
@@ -1307,7 +1307,7 @@ int main()
 {
     try
     {
-        pqxx::connection conn("dbname=bookshop_management user=postgres password=your_password hostaddr=127.0.0.1 port=5432");
+        pqxx::connection conn("dbname=bookshop_management user=postgres password=Kitsaws@2002 hostaddr=127.0.0.1 port=5432");
         if(conn.is_open()){
             while (1){
                 system ("cls");
