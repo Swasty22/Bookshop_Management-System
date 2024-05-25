@@ -19,7 +19,8 @@
 <ul>
   <li>place new order</li>
   <li> View order</li>
-  <li>Canceled order</li>  <h2>basically order status</h2>
+   <h2>basically order status</h2>
+  <li>Canceled order</li> 
   <li> Received order</li>
  
 </ul>
