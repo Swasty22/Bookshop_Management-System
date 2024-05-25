@@ -1,4 +1,8 @@
-<h1 style = "color:red">To compile the code</h1>
+<div>
+  <h2><li>To compile the code</li></h2>
+  <p><h3>clang++ $(pkg-config --cflags --libs libpqxx) -std=c++17 db_connect.cpp -o db_connect</h3></p>
+</div>
+
 
 <h1>Book shop Management system</h1>
 <h2>Overview</h2>
