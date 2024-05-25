@@ -1,6 +1,7 @@
 <h1>Book shop Management system</h1>
 <h2>Overview</h2>
-<p>This ia a basic , beginner friendly project with features like CRUD operations</p>
+<p>This ia a basic , beginner friendly project with features like CRUD operations.I used <h3><b><i>Postgresql</i></b></h3></p>
+<h2>Table of contents </h2>
 <h3>BOOKS</h3>
 <ul>
   <li>Add books</li>
@@ -25,9 +26,20 @@
 </ul>
 <h3>EMPLOYEE</h3>
 <ul>
-   void add_employee();
-    void search_employee();
-    void assign_manager();
-    void update_details();
-    void remove_employee();
+   <li>ADD employee</li>
+   <li>Remove employee</li>
+   <li>Update employee details</li>
+   <li>Assign as manager</li>
+</ul>
+<h3>MEMBERS</h3>
+<h4>Refresh(); basically refreshes the date of membership of member once date of membership ends.
+<ul>
+  <li>Add member</li>
+  <li>Remove member</li>
+  <li>Refresh</li>
+</ul>
+<h3>SALES</h3>
+<ul>
+  <li>add sales</li>
+  <li>Total sales </li>
 </ul>
