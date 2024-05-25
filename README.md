@@ -1,5 +1,5 @@
 <div>
-  <span>obviously u need to have installed<b><i>LIBPQXX</i></b>on ur system.</span>
+  <span>obviously u need to have installed<b><i> LIBPQXX </i></b>on ur system.</span>
 </div>
 <div>
   <h2><li>To compile the code (on mac)</li></h2>
