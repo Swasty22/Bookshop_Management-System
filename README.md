@@ -1,7 +1,7 @@
 <h1>Book shop Management system</h1>
 <h2>Overview</h2>
-<h4>This ia a basic , beginner friendly project with features like CRUD operations.</h4><br>
-  <p>I used <h3><b><i>Postgresql</i></b></h3></p>
+<h4>This ia a basic , beginner friendly project with features like CRUD operations.</h4>
+  <p><h3><b><i> Database used Postgresql</i></b></h3></p>
 <h2>Table of contents </h2>
 <h3>BOOKS</h3>
 <ul>
