@@ -1,6 +1,7 @@
 <div>
   <span>obviously u need to have installed <h3><b><i> LIBPQXX </i></b></h3>on ur system.</span>
-   <p>Database used<h3><b><i>Postgresql</i></b></h3></p>
+  <br>
+   <p></p>Database used<h3><b><i>Postgresql</i></b></h3></p>
 </div>
 <div>
   <h2><li>To compile the code (on mac)</li></h2>
