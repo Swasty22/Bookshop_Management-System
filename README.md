@@ -1,5 +1,6 @@
 <div>
   <span>obviously u need to have installed <h3><b><i> LIBPQXX </i></b></h3>on ur system.</span>
+   <p>Database used<h3><b><i>Postgresql</i></b></h3></p>
 </div>
 <div>
   <h2><li>To compile the code (on mac)</li></h2>
@@ -9,7 +10,6 @@
 <h1>Book shop Management system</h1>
 <h2>Overview</h2>
 <h4>This is a basic , beginner friendly project with features like CRUD operations.</h4>
-  <p><h3><b><i> Database used Postgresql</i></b></h3></p>
 <h2>Table of contents </h2>
 <h3>BOOKS</h3>
 <ul>
