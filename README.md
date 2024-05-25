@@ -19,8 +19,15 @@
 <ul>
   <li>place new order</li>
   <li> View order</li>
-   <h2>basically order status</h2>
+   <h2>order status</h2>
   <li>Canceled order</li> 
   <li> Received order</li>
- 
+</ul>
+<h3>EMPLOYEE</h3>
+<ul>
+   void add_employee();
+    void search_employee();
+    void assign_manager();
+    void update_details();
+    void remove_employee();
 </ul>
