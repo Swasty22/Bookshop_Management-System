@@ -1,10 +1,11 @@
 <div>
-  <h2><li>To compile the code</li></h2>
+  <span>obviously u need to have installed<b><i>LIBPQXX</i></b>on ur system.</span>
+</div>
+<div>
+  <h2><li>To compile the code (on mac)</li></h2>
   <p><h4>clang++ $(pkg-config --cflags --libs libpqxx) -std=c++17 db_connect.cpp -o db_connect</h4></p>
   <p><h5>./db_connect (to run the code...replace db_connect with your program's name)</h5></p>
 </div>
-
-
 <h1>Book shop Management system</h1>
 <h2>Overview</h2>
 <h4>This is a basic , beginner friendly project with features like CRUD operations.</h4>
