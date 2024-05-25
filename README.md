@@ -1,7 +1,7 @@
 <div>
   <span>obviously u need to have installed <h3><b><i> LIBPQXX </i></b></h3>on ur system.</span>
   <span><h3>POSTGRESQL</h3> is been used here</span>
-  
+  <p>install postgresql using BREW from terminal and install pgadmin4 and basically postgresql from internet</p>
 </div>
 <div>
   <h2><li>To compile the code (on mac)</li></h2>
@@ -53,3 +53,9 @@
   <li>add sales</li>
   <li>Total sales </li>
 </ul>
+<div>
+  <p>I haven't seen many resource on postgresql and C++ integerity for any Beginner friendly project like Management system so i made one just for absolute beginners.
+  This basically teaches Lot more mainly about classes and postgresql and libpqxx</p>
+
+  <p>can be improved a lot if any feel free to open issues and pull requests.</p>
+</div>
