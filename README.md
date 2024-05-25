@@ -1,6 +1,7 @@
 <div>
   <h2><li>To compile the code</li></h2>
-  <p><h3>clang++ $(pkg-config --cflags --libs libpqxx) -std=c++17 db_connect.cpp -o db_connect</h3></p>
+  <p><h4>clang++ $(pkg-config --cflags --libs libpqxx) -std=c++17 db_connect.cpp -o db_connect</h4></p>
+  <p><h5>./db_connect (to run the code...replace db_connect with your program's name)</h5></p>
 </div>
 
 
