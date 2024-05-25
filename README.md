@@ -1,6 +1,8 @@
+<h1 style = "color:red">To compile the code</h1>
+
 <h1>Book shop Management system</h1>
 <h2>Overview</h2>
-<h4>This ia a basic , beginner friendly project with features like CRUD operations.</h4>
+<h4>This is a basic , beginner friendly project with features like CRUD operations.</h4>
   <p><h3><b><i> Database used Postgresql</i></b></h3></p>
 <h2>Table of contents </h2>
 <h3>BOOKS</h3>
