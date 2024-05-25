@@ -1053,34 +1053,34 @@ void main_menu()
     switch (c)
     {
     case 1:
-        system("cls");
+        system("clear");
         book_menu();
         break;
 
     case 2:
-        system("cls");
+        system("clear");
         supplier_menu();
         break;
     case 3:
-        system("cls");
+        system("clear");
         purchase_menu();
         break;
     case 4:
-        system("cls");
+        system("clear");
         employee_menu();
         break;
     case 5:
-        system("cls");
+        system("clear");
         member_menu();
         break;
     case 6:
-        system("cls");
+        system("clear");
         sales_menu();
         break;
         case 7:
             exit(1);
         default:
-            system("cls");
+            system("clear");
             cout << "Invalid input" <<endl;
             break;
      
@@ -1310,13 +1310,13 @@ int main()
         pqxx::connection conn("dbname=bookshop_management user=postgres password=Kitsaws@2002 hostaddr=127.0.0.1 port=5432");
         if(conn.is_open()){
             while (1){
-                system ("cls");
+                system ("clear");
                 cout << "Main Menu"<<endl;
                 main_menu();
                 break;
             }
         }else{
-            system("cls");
+            system("clear");
             cout << "Error while connecting to the database." << endl << "Contact Tech Expert." << endl;
         }
 
